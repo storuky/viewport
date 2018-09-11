@@ -43,8 +43,33 @@ const store = {
       state.list = state.list.filter(object => id!=object.id)
     },
     update (state, params) {
-      const object = state.list.find(object => object.id == params.id)
-      Object.assign(object, params)
+      const objectIndex = state.list.findIndex(object => object.id == params.id)
+
+      state.list.splice(objectIndex, 1, { ...state.list[objectIndex], ...params})
+    },
+    setGroupPreview (state, objectIds) {
+      state.list = state.list.filter(object => {
+        return !(object.type == 'Base_GroupObject' && isNaN(object.id))
+      })
+
+      const exist = state.list
+        .find(object => {
+          return object.type == 'Base_GroupObject' && JSON.stringify(object.info.settings.objectIds.sort()) == JSON.stringify(objectIds.sort())
+        })
+      
+      if (!exist && objectIds.length > 1) {
+        state.list.push({
+          type: 'Base_GroupObject',
+          info: {
+            settings: {
+              objectIds
+            }
+          }
+        })
+      }
+    },
+    create (state, params) {
+      state.list.push(params)
     }
   },
   actions: {
@@ -77,6 +102,12 @@ const store = {
     },
     update ({ commit }, params) {
       commit('update', params)
+    },
+    setGroupPreview ({ commit, rootGetters }) {
+      commit('setGroupPreview', rootGetters['object/selectedIds'])
+    },
+    create ({ commit }, params) {
+      commit('create', params)
     }
   },
   getters: {

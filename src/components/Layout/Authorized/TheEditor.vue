@@ -20,10 +20,6 @@
 
     <v-content class="editor-content">
       <Viewport>
-        <BaseGroup
-          v-for="group in groups"
-          :key="'group-'+group.id"
-          v-bind="group" />
         <BaseObject
           v-for="object in objects"
           :key="object.id"
@@ -38,7 +34,6 @@
 <script>
   import Viewport from './TheEditor/Viewport.vue'
   import BaseObject from './TheEditor/BaseObject.vue'
-  import BaseGroup from './TheEditor/BaseGroup.vue'
   import AppHeader from './AppHeader'
   import ThePropertyEditor from './TheEditor/ThePropertyEditor'
 
@@ -50,7 +45,6 @@
     components: {
       Viewport,
       BaseObject,
-      BaseGroup,
       AppHeader,
       ThePropertyEditor
     },
@@ -74,14 +68,6 @@
         },
         set (objects) {
           this.$store.dispatch('object/setList', objects)
-        }
-      },
-      groups: {
-        get () {
-          return this.$store.getters['group/list']
-        },
-        set (groups) {
-          this.$store.dispatch('group/setList', groups)
         }
       }
     },

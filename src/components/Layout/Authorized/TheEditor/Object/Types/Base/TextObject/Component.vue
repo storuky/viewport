@@ -1,6 +1,6 @@
 <template>
-  <div :class="{'text-object-bottom': position == 'bottom'}" class="text-object" :style="textObjectStyles">
-    <div class="text-object__placeholder" v-if="!localSettings.content">
+  <div :class="[position ? `text-object--${position}` : '']" class="text-object" :style="textObjectStyles">
+    <div class="text-object__placeholder" v-if="!localSettings[modelName]">
       {{placeholder || 'Double click to edit...'}}
     </div>
     <div
@@ -22,10 +22,14 @@
       baseObject: Object,
       settings: Object,
       placeholder: String,
-      position: String
+      position: String,
+      modelName: {
+        type: String,
+        default: 'content'
+      }
     },
     mounted () {
-      this.$refs.content.innerHTML = this.localSettings.content || ""
+      this.$refs.content.innerHTML = this.localSettings[this.modelName] || ""
     },
     data () {
       return {
@@ -35,7 +39,7 @@
     },
     methods: {
       update (event) {
-        this.localSettings = {...this.localSettings, content: event.target.innerHTML}
+        this.localSettings = {...this.localSettings, [this.modelName]: event.target.innerHTML}
 
         this.$store.dispatch('object/update', {
           id: this.baseObject.id,
@@ -71,8 +75,8 @@
     watch: {
       localSettings () {
         this.$emit('update:settings', this.localSettings)
-        if (this.localSettings.content != this.$refs.content.innerHTML) {
-          this.$refs.content.innerHTML = this.localSettings.content || ""
+        if (this.localSettings[this.modelName] != this.$refs.content.innerHTML) {
+          this.$refs.content.innerHTML = this.localSettings[this.modelName] || ""
         }
       },
       settings () {
@@ -88,11 +92,22 @@
     display: flex;
   }
 
-  .text-object-bottom {
+  .text-object--bottom {
     position: absolute;
     left: -10%;
     right: -10%;
+    top: 100%;
     height: auto !important;
+    margin-top: 5px;
+  }
+
+  .text-object--top {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    height: auto !important;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
   }
 
   .text-object__placeholder {

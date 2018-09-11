@@ -32,9 +32,10 @@
     methods: {
       save () {
         this.opened = false
+
         this.$store.dispatch('object/update', {
           id: this.activeObject.id,
-          ...this.props
+          info: {...this.props}
         })
       }
     },

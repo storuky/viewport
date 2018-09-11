@@ -69,6 +69,7 @@
     methods: {
       deselectAll () {
         this.$store.dispatch('object/deselectAll')
+        this.$store.dispatch('object/setGroupPreview')
       },
       setZoom () {
         this.d3Viewport

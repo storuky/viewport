@@ -2,7 +2,7 @@
   <div
     @mouseover="hover = true"
     @mouseleave="hover = false"
-    :class="{selected}"
+    :class="[{selected}, type]"
     @click.stop="setSelected"
     class="base-object"
     :style="objectStyles">
@@ -71,11 +71,17 @@
       }
     },
     watch: {
-      position () {
-        this.localPosition = {...this.position || {}}
+      position: {
+        handler () {
+          this.localPosition = {...this.position || {}}
+        },
+        deep: true
       },
-      size () {
-        this.localSize = this.size
+      size: {
+        handler () {
+          this.localSize = {...this.size || {}}
+        },
+        deep: true
       }
     },
     computed: {
@@ -102,8 +108,7 @@
           id: this.id,
           selected: this.selected,
           position: this.localPosition,
-          width: this.localSize.width,
-          height: this.localSize.height
+          size: this.localSize
         }
       }
     },
@@ -119,8 +124,11 @@
             this.$store.dispatch('object/select', this.id)
           }
         }
+
+        this.$store.dispatch('object/setGroupPreview')
       },
       destroy () {
+        console.log(this.id)
         this.$store.dispatch('object/delete', this.id)
       },
       openPropertyEditor () {
@@ -248,5 +256,9 @@
     position: relative;
     height: 100%;
     /* z-index: 2; */
+  }
+
+  .Base_GroupObject {
+    z-index: 1 !important;
   }
 </style>

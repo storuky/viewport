@@ -2,13 +2,13 @@
   <div>
     <v-text-field label="Border Radius" type="number" v-model="localSettings.borderRadius"></v-text-field>
     <v-text-field class="input-color" label="Background Color" type="color" v-model="localSettings.backgroundColor"></v-text-field>
-    <PropertyEditor :settings.sync="localSettings" />
+    <TextObjectPropertyEditor :settings.sync="localSettings" />
   </div>
 </template>
 
 <script>
   import { VueEditor } from 'vue2-editor'
-  import PropertyEditor from '../TextObject/PropertyEditor'
+  import TextObjectPropertyEditor from '../TextObject/PropertyEditor'
 
   export default {
     name: 'RectObjectPropertyEditor',
@@ -17,7 +17,7 @@
     },
     components: {
       VueEditor,
-      PropertyEditor
+      TextObjectPropertyEditor
     },
     data () {
       return {
