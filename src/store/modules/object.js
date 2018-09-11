@@ -56,6 +56,7 @@ const store = {
         .find(object => {
           return object.type == 'Base_GroupObject' && JSON.stringify(object.info.settings.objectIds.sort()) == JSON.stringify(objectIds.sort())
         })
+
       
       if (!exist && objectIds.length > 1) {
         state.list.push({
@@ -70,6 +71,10 @@ const store = {
     },
     create (state, params) {
       state.list.push(params)
+    },
+    addToGroup(state, { groupId, objectId }) {
+      const object = state.list.find(object => object.id == groupId)
+      object.info.settings.objectIds.push(objectId)
     }
   },
   actions: {
@@ -108,6 +113,9 @@ const store = {
     },
     create ({ commit }, params) {
       commit('create', params)
+    },
+    addToGroup ({commit}, {groupId, objectId}) {
+      commit('addToGroup', { groupId, objectId })
     }
   },
   getters: {

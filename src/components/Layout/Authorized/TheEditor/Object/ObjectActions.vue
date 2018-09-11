@@ -2,6 +2,7 @@
   <transition name="object-actions">
     <div v-if="opened" class="object-actions">
       <div class="object-actions-left">
+        <v-icon v-if="actionsList.includes('extract')" size="18" class="object-action" @click="$emit('extract')">reply</v-icon>
       </div>
       <div class="object-actions-right">
         <v-icon size="18" class="object-action" @click="$emit('settings')">code</v-icon>
@@ -15,7 +16,8 @@
   export default {
     name: 'ObjectActions',
     props: {
-      opened: Boolean
+      opened: Boolean,
+      actionsList: Array
     }
   }  
 </script>
@@ -42,10 +44,14 @@
     position: absolute;
     right: 0;
   }
-
+  .object-actions-left .object-action {
+    margin-right: 10px !important;
+  }
+  .object-actions-right .object-action {
+    margin-left: 10px !important;
+  }
   .object-action {
     cursor: pointer;
-    margin-left: 10px !important;
     background: #1976d1;
     color: white !important;
     border-radius: 100px;

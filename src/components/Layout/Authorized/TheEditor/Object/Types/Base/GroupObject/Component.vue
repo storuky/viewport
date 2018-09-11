@@ -137,8 +137,14 @@
       localSettings () {
         this.$emit('update:settings', this.localSettings)
       },
-      settings () {
-        this.localSettings = this.settings
+      settings: {
+        handler () {
+          this.localSettings = this.settings
+          if (this.localSettings.objectIds.length < 2) {
+            this.$store.dispatch('object/delete', this.baseObject.id)
+          }
+        },
+        deep: true
       }
     }
   }

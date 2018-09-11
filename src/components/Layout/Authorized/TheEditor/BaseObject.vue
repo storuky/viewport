@@ -12,7 +12,12 @@
       :height="localSize.height"
       :position="localPosition"
       v-if="selected && resizable" />
-    <ObjectActions :opened="hover || selected" @settings="openPropertyEditor" @delete="destroy"/>
+    <ObjectActions
+      :actionsList="actionsList"
+      :opened="hover || selected"
+      @settings="openPropertyEditor"
+      @delete="destroy"
+      @extract="extract"/>
     <div class="base-object__content">
       <component :is="type" v-bind.sync="info" :baseObject="baseObject"></component>
     </div>
@@ -85,6 +90,16 @@
       }
     },
     computed: {
+      actionsList () {
+        const actions = ['settings', 'delete']
+        if (this.groups.length) {
+          actions.push('extract')
+        }
+        return actions
+      },
+      groups () {
+        return this.$store.getters['object/list'].filter(object => object.type == 'Base_GroupObject' && object.info.settings.objectIds.includes(this.id))
+      },
       objectStyles () {
         const {width, height, maxWidth, maxHeight, minWidth, minHeight} = defaultProperties[this.type].size
         return {
@@ -128,8 +143,13 @@
         this.$store.dispatch('object/setGroupPreview')
       },
       destroy () {
-        console.log(this.id)
         this.$store.dispatch('object/delete', this.id)
+      },
+      extract () {
+        this.groups.forEach(group => {
+          group.info.settings.objectIds = group.info.settings.objectIds.filter(id => id != this.id)
+          this.$store.dispatch('object/update', group)
+        })
       },
       openPropertyEditor () {
         this.$store.dispatch('modals/open', {type: 'propertyEditor'})
@@ -173,6 +193,23 @@
 
               this.$store.dispatch('object/update', {id: this.id, position: targetPosition})
             }
+          })
+          .on('end', () => {
+            this.$store.getters['object/list'].forEach(object => {
+              if (object.type != 'Base_GroupObject') return
+
+              let inside =  d3.event.x > object.position.x &&
+                            d3.event.x < object.position.x + object.size.width &&
+                            d3.event.y > object.position.y &&
+                            d3.event.y < object.position.y + object.size.height
+              
+              if (inside) {
+                this.$store.dispatch('object/addToGroup', {
+                  groupId: object.id,
+                  objectId: this.id
+                })
+              }
+            })
           })
         return dragHandler
       },
