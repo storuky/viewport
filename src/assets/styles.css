@@ -1,0 +1,23 @@
+html, body {
+  overflow: hidden;
+}
+
+.page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 20px 20px 20px 65px;
+}
+
+.page-content {
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+  height: 100%;
+}
+
+.input-color input {
+  height: 30px;
+  padding: 0;
+}
